@@ -10,6 +10,7 @@ import configs
 df = pd.read_csv(configs.PATH_CLEAN_ALL_PATH, names=configs.HEADER_CSV)
 
 
+
 #generation de la maps
 for ligne in range(0, configs.NB_LIGNES):
 

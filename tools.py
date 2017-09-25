@@ -44,3 +44,10 @@ def filesByDim(dim):
 	return files
 
 
+
+def extrairePixelImage(x, y, rgb_im):
+	r, g, b, a = rgb_im.getpixel((x, y))
+	if a is not 0:
+		return (r, g, b)
+	else:
+		return (35,78,154)

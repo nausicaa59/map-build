@@ -7,7 +7,7 @@ import configs
 
 
 #preparation de la maps
-dim = 5
+dim = 1
 dim_folder = configs.PATH_TEMPO_FILE_DIM + str(dim)
 old_dim = dim - 1
 old_files = tools.filesByDim(old_dim)
