@@ -31,6 +31,9 @@ type cercle struct {
   c_y0 float64
   c_x1 float64
   c_y1 float64
+  i1 int
+  i2 int
+  i3 int
 }
 
 
@@ -141,6 +144,21 @@ func stringToCircle(fragment []string) cercle {
     fmt.Println("erreur c_y1 invalide")
   }
 
+  i1, err := strconv.Atoi(fragment[12]);
+  if(err !=  nil){
+    fmt.Println("erreur c_y1 invalide")
+  }
+
+  i2, err := strconv.Atoi(fragment[13]);
+  if(err !=  nil){
+    fmt.Println("erreur c_y1 invalide")
+  }
+
+  i3, err := strconv.Atoi(fragment[14]);
+  if(err !=  nil){
+    fmt.Println("erreur c_y1 invalide")
+  }
+
   return cercle{
     id : fragment[1],
     x : x,
@@ -152,7 +170,10 @@ func stringToCircle(fragment []string) cercle {
     c_x0 : c_x0,
     c_y0 : c_y0,
     c_x1 : c_x1,
-    c_y1 : c_y1}
+    c_y1 : c_y1,
+    i1 : i1,
+    i2 : i2,
+    i3 : i3}
 }
 
 
@@ -199,6 +220,24 @@ func prepareFolder(f fichier) string {
   return lignePath
 }
 
+func placeText(c cercle, dc *gg.Context, x float64, y float64) {
+  nbCaract := len(c.id)
+  largeurCaract := (c.c_x1 - c.c_x0)/float64(nbCaract)
+  size := ((1.9755*largeurCaract) -0.0127)
+
+  if(size >= 10) {
+    if err := dc.LoadFontFace("c:/laragon/www/map/build/assets/input/nasalization-rg.ttf", size); err != nil {
+      panic(err)
+    }
+
+    width, height := dc.MeasureString(c.id)
+    dc.SetRGB255(255, 255, 255)
+    dc.DrawString(c.id, x - width/2, y + height/2)
+    dc.Fill()
+    fmt.Println("trace !")    
+  }
+}
+
 
 func traceCercle(f fichier, cercles []cercle, quality int) {
     correctionX := f.colonne * 256 * quality
@@ -209,15 +248,23 @@ func traceCercle(f fichier, cercles []cercle, quality int) {
     
     dc := gg.NewContext(256*quality, 256*quality)
     dc.SetRGB255(0, 0, 0)
-    dc.DrawRectangle(0,0,256,256)
+    dc.DrawRectangle(0,0,256*float64(quality),256*float64(quality))
     dc.Fill()
 
     for _, c := range cercles {
       x:= (c.x*float64(quality)) - float64(correctionX)
       y:= (c.y*float64(quality)) - float64(correctionY)
       dc.DrawCircle(x, y, c.r*float64(quality))
-      dc.SetRGB255(c.c1, c.c2, c.c3)
+
+      if(f.dim == 0) {
+        dc.SetRGB255(c.i1, c.i2, c.i3)
+      } else {
+        dc.SetRGB255(c.c1, c.c2, c.c3)
+      }
+      
       dc.Fill()
+
+      placeText(c, dc, x, y)
     }
     
     dc.SavePNG(outputFile)
@@ -225,7 +272,7 @@ func traceCercle(f fichier, cercles []cercle, quality int) {
 
 
 func main() {
-  searchDir := "c:/laragon/www/map/build/assets/tempo/txt/5"
+  searchDir := "c:/laragon/www/map/build/assets/tempo/txt/1"
   fileList := searchAllFiles(searchDir)
   fileInfos := searchAllInfo(fileList)
   
